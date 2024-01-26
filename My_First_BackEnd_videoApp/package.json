@@ -2,14 +2,19 @@
   "name": "my_first_backend_videoapp",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js"
   },
   "keywords": [
     "javascript",
     "backeEnd"
   ],
   "author": "Rizwan Ahmed",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "nodemon": "^3.0.3"
+  }
 }
