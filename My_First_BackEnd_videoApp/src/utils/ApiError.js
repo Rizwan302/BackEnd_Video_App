@@ -3,7 +3,7 @@
 export default class ApiError extends Error {
     constructor(
         statusCode,
-        message: "Something Enter Message",
+        message = "Something Enter Message",
         error = [],
         stack = ""
     ) {

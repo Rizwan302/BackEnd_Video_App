@@ -13,7 +13,7 @@ const uploadFile = async (path) => {
     if(!path) return null;
     const response = await cloudinary.uploader.upload(path, { public_id: "olympic_flag" },
       function (error, result) {
-        console.log(result);
+        console.log('result');
       });
       console.log(response, ":: File Upload")
       return response
@@ -22,3 +22,5 @@ const uploadFile = async (path) => {
     fs.unlinkSync(path)
   }
 }
+
+export {uploadFile}

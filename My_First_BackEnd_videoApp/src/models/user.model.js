@@ -1,11 +1,13 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from 'bcrypt'
+import jwt from "jsonwebtoken";
+import ApiError from "../utils/ApiError.js";
 
 const userSchema = mongoose.Schema({
     username:{
         type: String,
         lowercase: true,
-        trim: trim,
+        trim: true,
         required: true,
         unique: true,
         index: true
@@ -13,7 +15,7 @@ const userSchema = mongoose.Schema({
     email:{
         type: String,
         lowercase: true,
-        trim: trim,
+        trim: true,
         required: true,
         unique: true
     },
@@ -33,7 +35,7 @@ const userSchema = mongoose.Schema({
     password:{
         type:String,
         required:true,
-        trim:trim
+        trim:true
     },
     watchHistory:[
         {
@@ -48,11 +50,19 @@ const userSchema = mongoose.Schema({
 {
     timestamps: true
 })
-userSchema.pre("Save",async function(next){
+userSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next();
-    this.password = bcrypt.hash(this.password, 10);
-    next()
+    try {
+        const hashedPassword  = await bcrypt.hash(this.password, 10);
+        this.password = hashedPassword
+        console.log("New password   :", hashedPassword)
+        next()
+    } catch (error) {
+       throw new ApiError(301, "not bcrypt password")
+    }
 });
+
+
 
 userSchema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password, this.password)
@@ -64,9 +74,12 @@ userSchema.methods.generateAccessToken = function(){
             _id: this._id,
             email: this.email,
             username: this.username,
-            fullName: this.fullName
+            password: this.password,
         },
-        
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
     )
 };
 
